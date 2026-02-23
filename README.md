@@ -22,17 +22,19 @@ git clone https://github.com/pkubryk/Marcus.git .kiro
 │   └── no-documentation.md          # Prevents unnecessary summary/report generation
 │
 ├── hooks/                           # Active enforcement — fires on events
-│   ├── spec-before-code.json        # Gate: blocks code writes without a spec
-│   ├── enforce-structure.json       # Gate: validates package layout on file creation
-│   ├── coverage-check.json          # Auto: runs pytest --cov after each task
-│   ├── readme-freshness.json        # Auto: checks README accuracy after each task
-│   ├── architecture-review.json     # On-demand: senior architect review
-│   ├── product-review.json          # On-demand: senior PM review
-│   ├── security-review.json         # On-demand: security audit
-│   ├── accessibility-review.json    # On-demand: accessibility audit
-│   ├── analytics-review.json        # On-demand: analytics instrumentation check
-│   ├── hygiene-audit.json           # On-demand: project hygiene audit
-│   └── consistency-audit.json       # On-demand: Marcus internal consistency check
+│   ├── spec-before-code.kiro.hook        # Gate: blocks code writes without a package-level spec
+│   ├── enforce-structure.kiro.hook       # Gate: validates package layout with feature-scoped dirs
+│   ├── layer1-before-layer3.kiro.hook    # Gate: blocks Layer 3 specs without matching Layer 1
+│   ├── doc-drift-check.kiro.hook         # Auto: detects stale docs/specs/READMEs after every session
+│   ├── coverage-check.kiro.hook          # Auto: runs pytest --cov after each task
+│   ├── readme-freshness.kiro.hook        # Auto: checks README accuracy after each task
+│   ├── architecture-review.kiro.hook     # On-demand: senior architect review
+│   ├── product-review.kiro.hook          # On-demand: senior PM review
+│   ├── security-review.kiro.hook         # On-demand: security audit
+│   ├── accessibility-review.kiro.hook    # On-demand: accessibility audit
+│   ├── analytics-review.kiro.hook        # On-demand: analytics instrumentation check
+│   ├── hygiene-audit.kiro.hook           # On-demand: project hygiene audit
+│   └── consistency-audit.kiro.hook       # On-demand: Marcus internal consistency check
 │
 └── checklists/                      # Review content — referenced by hooks and tasks
     ├── architecture-review.md       # Technical soundness, alternatives, failure modes
@@ -44,10 +46,31 @@ git clone https://github.com/pkubryk/Marcus.git .kiro
     └── consistency.md               # Internal consistency between Marcus docs and files
 ```
 
+## Three-Layer Specification Model
+
+```
+{package}/
+├── docs/                            # Layer 1: high-level specs
+│   └── {feature-name}/              # One directory per feature
+│       └── spec.md                  # Context, vision, domain knowledge
+├── .kiro/
+│   ├── steering/                    # Layer 2: module-specific conventions
+│   └── specs/                       # Layer 3: implementation-ready specs
+│       └── {feature-name}/          # Mirrors docs/{feature-name}/
+│           ├── requirements.md
+│           ├── design.md
+│           └── tasks.md
+├── {source_package}/
+├── tests/
+└── pyproject.toml
+```
+
+Layer 1 and Layer 3 use the same feature name. The mapping is 1:1 — `docs/{feature}/` is the high-level foundation, `.kiro/specs/{feature}/` is the implementation contract.
+
 ## Workflow
 
 ```
-1. Draft high-level spec (Layer 1)
+1. Draft high-level spec (Layer 1)     → {package}/docs/{feature}/spec.md
 2. Run Architecture Challenger          ← userTriggered hook
 3. Run Product Challenger               ← userTriggered hook
 4. Iterate until satisfied
@@ -73,14 +96,16 @@ git clone https://github.com/pkubryk/Marcus.git .kiro
 
 **Secondary trigger**: All agents are also available as userTriggered hooks in the Agent Hooks panel for ad-hoc use outside of spec execution (e.g., periodic audits, pre-PR reviews, exploratory checks).
 
-## Automatic Hooks (Gates)
+## Automatic Hooks (Gates and Checks)
 
 | Hook | Trigger | Purpose |
 |------|---------|---------|
-| Spec Before Code | `preToolUse:write` | Blocks code writes if no Layer 3 spec exists for the feature. Exceptions: specs, steering, config, docs, test fixtures. |
-| Enforce Structure | `fileCreated` | Validates that new files follow the required package layout (docs/, .kiro/steering/, .kiro/specs/, source/, tests/, pyproject.toml). |
-| Coverage Check | `postTaskExecution` | Runs `pytest --cov --cov-fail-under=80` after each task completes. Reports coverage per module and flags if below 80% threshold. |
-| README Freshness | `postTaskExecution` | Checks if package README accurately reflects changes made. Updates or creates README if stale. |
+| Spec Before Code | `preToolUse:write` | Blocks code writes if no Layer 3 spec exists in the target package's `.kiro/specs/`. A spec at workspace-root does NOT satisfy this. |
+| Enforce Structure | `fileCreated` | Validates package layout: `docs/{feature}/` mirrors `.kiro/specs/{feature}/`. Rejects specs at workspace-root `.kiro/specs/`. |
+| Layer 1 Before Layer 3 | `preToolUse:write` | Blocks Layer 3 spec creation unless a matching Layer 1 spec exists at `{package}/docs/{feature}/`. |
+| Doc Drift Check | `agentStop` | After every agent session, checks if code changes made specs, READMEs, or Layer 1 docs stale. Updates them if so. |
+| Coverage Check | `postTaskExecution` | Runs `pytest --cov --cov-fail-under=80` after each task completes. Reports coverage per module. |
+| README Freshness | `postTaskExecution` | Checks if package README accurately reflects changes made during task execution. |
 
 These fire automatically — no manual trigger needed.
 
@@ -88,7 +113,7 @@ These fire automatically — no manual trigger needed.
 
 | File | Inclusion | Purpose |
 |------|-----------|---------|
-| `methodology.md` | Always | Spec-driven workflow, three-layer model, package layout, dialogue validation rule, review agent integration rules |
+| `methodology.md` | Always | Spec-driven workflow, three-layer model, feature-scoped package layout, dialogue validation rule, review agent integration, ad-hoc drift checking |
 | `quality.md` | Always | Type safety, error handling, code structure, testability, testing standards |
 | `no-documentation.md` | Always | Prevents AI from creating summary docs, cleanup reports, or process documentation unless explicitly requested |
 
@@ -107,16 +132,19 @@ Review tasks reference the checklist files and instruct the agent to evaluate th
 ## Key Rules
 
 1. **No spec, no code** — enforced by the `spec-before-code` hook
-2. **No spec without dialogue** — the AI must challenge, question, and validate before creating any spec document
-3. **Reviews are mandatory in task lists** — Security always, Accessibility and Analytics conditionally
-4. **Specs and code commit together** — specs are the living source of truth
-5. **Three-layer package layout** — every package has docs/ (Layer 1), .kiro/steering/ (Layer 2), .kiro/specs/ (Layer 3)
+2. **Layer 1 before Layer 3** — enforced by the `layer1-before-layer3` hook
+3. **Specs in packages, not workspace root** — enforced by `enforce-structure` and `spec-before-code`
+4. **Feature directories match** — `docs/{feature}/` maps 1:1 to `.kiro/specs/{feature}/`
+5. **No spec without dialogue** — the AI must challenge, question, and validate before creating any spec document
+6. **Reviews are mandatory in task lists** — Security always, Accessibility and Analytics conditionally
+7. **No stale docs** — the `doc-drift-check` hook catches drift even from ad-hoc changes
+8. **Specs and code commit together** — specs are the living source of truth
 
 ## Per-Project Customization
 
 Marcus provides workspace-level enforcement. Individual packages add their own:
+- `{package}/docs/{feature}/` — high-level specs (Layer 1)
 - `{package}/.kiro/steering/` — module-specific conventions (Layer 2)
 - `{package}/.kiro/specs/{feature}/` — implementation specs (Layer 3)
-- `{package}/docs/` — high-level specs (Layer 1)
 
 These are project-specific and NOT part of Marcus.

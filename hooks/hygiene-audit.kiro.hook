@@ -1,8 +1,7 @@
 {
-  "enabled": true,
   "name": "Hygiene Audit",
+  "version": "1.0.0",
   "description": "On-demand project hygiene audit — dead code, naming, orphaned files, dependency cleanup",
-  "version": "1",
   "when": {
     "type": "userTriggered"
   },

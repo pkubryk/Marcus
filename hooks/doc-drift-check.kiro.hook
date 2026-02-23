@@ -1,0 +1,12 @@
+{
+  "name": "Documentation Drift Check",
+  "version": "1.0.0",
+  "description": "Detects when code changes may have caused specs, READMEs, or Layer 1 docs to become stale — fires after every agent execution",
+  "when": {
+    "type": "agentStop"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the changes made during this session. For each source file that was created or modified, check whether the change affects behavior documented in any of these artifacts:\n\n1. The package's README.md\n2. Layer 1 high-level specs in {package}/docs/{feature}/\n3. Layer 3 implementation specs in {package}/.kiro/specs/{feature}/ (requirements.md, design.md)\n4. The workspace-level .kiro/README.md (if .kiro/ files were changed)\n\nFor each artifact that may be stale:\n- State which artifact is affected\n- State what specifically is now out of date\n- Update the artifact to reflect the current state\n\nIf no documentation drift is detected, do nothing — do not report that everything is fine.\n\nIMPORTANT: This applies to ALL changes, including ad-hoc fixes, vibe coding, and tactical corrections. Even a one-line bug fix can invalidate a spec's acceptance criteria or a README's API description."
+  }
+}

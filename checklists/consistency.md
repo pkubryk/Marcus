@@ -17,7 +17,7 @@ steering files, hooks, and checklists.
 ## Cross-Reference Integrity
 - Every checklist path referenced in a hook's prompt actually exists as a file
 - Every checklist path referenced in methodology.md actually exists as a file
-- Every hook mentioned in methodology.md has a corresponding .json file in hooks/
+- Every hook mentioned in methodology.md has a corresponding .kiro.hook file in hooks/
 - Every review mentioned in the Available Reviews table has a corresponding checklist
 - The task list example in methodology.md references only existing checklists
 

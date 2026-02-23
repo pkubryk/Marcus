@@ -1,8 +1,7 @@
 {
-  "enabled": true,
   "name": "README Freshness Check",
+  "version": "1.0.0",
   "description": "Checks if package README reflects current state after task completion",
-  "version": "1",
   "when": {
     "type": "postTaskExecution"
   },

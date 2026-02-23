@@ -1,0 +1,13 @@
+{
+  "name": "Layer 1 Before Layer 3",
+  "version": "1.1.0",
+  "description": "Ensures a high-level spec exists in the package docs/{feature}/ directory before any Layer 3 implementation spec is created",
+  "when": {
+    "type": "preToolUse",
+    "toolTypes": ["write"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Check if the file being written is a Layer 3 implementation spec (requirements.md, design.md, or tasks.md inside a .kiro/specs/{feature}/ directory within a package). If it is, extract the feature name from the path (the directory name under .kiro/specs/) and verify that a Layer 1 high-level spec already exists at {package}/docs/{feature-name}/. The feature name MUST match between Layer 1 and Layer 3. For example, if writing to nestor/.kiro/specs/knowledge-pipeline/requirements.md, check that nestor/docs/knowledge-pipeline/ exists and contains a spec document. If no matching Layer 1 spec exists, REJECT the write and tell the user: 'The methodology requires a Layer 1 high-level spec at {package}/docs/{feature-name}/ before creating Layer 3 implementation specs at {package}/.kiro/specs/{feature-name}/. Write the high-level spec first, run the Architecture and Product Challenger reviews, then create the implementation spec.' This rule does NOT apply to files outside of .kiro/specs/ directories."
+  }
+}
