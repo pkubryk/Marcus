@@ -63,6 +63,8 @@ When using Kiro's spec assistant, always verify the target path before creating
 any spec document. If the spec workflow defaults to `.kiro/specs/`, override it
 to the correct package path.
 
+This is enforced by the `enforce-structure` hook on file creation.
+
 ## RULE: Layer 1 Before Layer 3
 
 No Layer 3 implementation spec (requirements.md, design.md, tasks.md in
@@ -83,7 +85,39 @@ The workflow is:
 3. Iterate until satisfied
 4. Only then create Layer 3 specs in `{package}/.kiro/specs/{feature-name}/`
 
-This is enforced by the `layer1-before-layer3` hook.
+This is enforced by the `enforce-structure` hook on file creation.
+
+**Note:** The `spec-before-code` and `layer1-before-layer3` checks are merged
+into the `enforce-structure` hook, which fires once on file creation rather than
+on every write operation. This reduces cost while still catching violations at
+the moment they occur. The steering rules provide continuous passive enforcement.
+
+## RULE: Layer 1 Spec Structure
+
+Every Layer 1 high-level spec (`{package}/docs/{feature}/spec.md`) MUST contain
+the following sections in order:
+
+1. **Problem** — what problem this feature solves, why it matters
+2. **Vision** — the high-level approach and guiding principle
+3. **Architecture** — containing two Mermaid diagrams:
+   - **Data Flow** — a `graph TD` flowchart showing the end-to-end data flow
+     through the feature. Show inputs, processing stages, decision points,
+     outputs, and feedback loops. Use subgraphs to group related stages.
+   - **Module Structure** — a `graph LR` diagram showing the modules/components
+     that make up the feature, their responsibilities, and dependency arrows
+     between them. Distinguish new modules from existing ones.
+4. **Detailed description of each stage/component** — prose expanding on the
+   architecture diagrams with specifics, tradeoffs, and design rationale
+5. **Key Architectural Decisions** — numbered list of the major decisions and
+   why they were made
+6. **Scale Considerations** — if applicable, what matters at the expected scale
+7. **Dependencies** — existing and new dependencies needed
+8. **Out of Scope** — what is explicitly not covered by this feature
+
+The Architecture section with Mermaid diagrams is mandatory, not optional. The
+diagrams are the primary communication tool for reviewers (Architecture Challenger,
+Product Challenger) and for developers who will implement from the Layer 3 specs.
+A spec without diagrams is incomplete.
 
 ## Workflow
 

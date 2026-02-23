@@ -22,9 +22,7 @@ git clone https://github.com/pkubryk/Marcus.git .kiro
 │   └── no-documentation.md          # Prevents unnecessary summary/report generation
 │
 ├── hooks/                           # Active enforcement — fires on events
-│   ├── spec-before-code.kiro.hook        # Gate: blocks code writes without a package-level spec
-│   ├── enforce-structure.kiro.hook       # Gate: validates package layout with feature-scoped dirs
-│   ├── layer1-before-layer3.kiro.hook    # Gate: blocks Layer 3 specs without matching Layer 1
+│   ├── enforce-structure.kiro.hook       # Gate: validates layout, spec placement, Layer 1→3, spec-before-code
 │   ├── doc-drift-check.kiro.hook         # Auto: detects stale docs/specs/READMEs after every session
 │   ├── coverage-check.kiro.hook          # Auto: runs pytest --cov after each task
 │   ├── readme-freshness.kiro.hook        # Auto: checks README accuracy after each task
@@ -100,9 +98,7 @@ Layer 1 and Layer 3 use the same feature name. The mapping is 1:1 — `docs/{fea
 
 | Hook | Trigger | Purpose |
 |------|---------|---------|
-| Spec Before Code | `preToolUse:write` | Blocks code writes if no Layer 3 spec exists in the target package's `.kiro/specs/`. A spec at workspace-root does NOT satisfy this. |
-| Enforce Structure | `fileCreated` | Validates package layout: `docs/{feature}/` mirrors `.kiro/specs/{feature}/`. Rejects specs at workspace-root `.kiro/specs/`. |
-| Layer 1 Before Layer 3 | `preToolUse:write` | Blocks Layer 3 spec creation unless a matching Layer 1 spec exists at `{package}/docs/{feature}/`. |
+| Enforce Structure | `fileCreated` | Validates package layout, rejects misplaced specs, checks Layer 1 exists before Layer 3, warns if code created without a spec. All checks on file creation only. |
 | Doc Drift Check | `agentStop` | After every agent session, checks if code changes made specs, READMEs, or Layer 1 docs stale. Updates them if so. |
 | Coverage Check | `postTaskExecution` | Runs `pytest --cov --cov-fail-under=80` after each task completes. Reports coverage per module. |
 | README Freshness | `postTaskExecution` | Checks if package README accurately reflects changes made during task execution. |
@@ -131,14 +127,15 @@ Review tasks reference the checklist files and instruct the agent to evaluate th
 
 ## Key Rules
 
-1. **No spec, no code** — enforced by the `spec-before-code` hook
-2. **Layer 1 before Layer 3** — enforced by the `layer1-before-layer3` hook
-3. **Specs in packages, not workspace root** — enforced by `enforce-structure` and `spec-before-code`
+1. **No spec, no code** — enforced by `enforce-structure` hook on file creation
+2. **Layer 1 before Layer 3** — enforced by `enforce-structure` hook on file creation
+3. **Specs in packages, not workspace root** — enforced by `enforce-structure` hook
 4. **Feature directories match** — `docs/{feature}/` maps 1:1 to `.kiro/specs/{feature}/`
-5. **No spec without dialogue** — the AI must challenge, question, and validate before creating any spec document
-6. **Reviews are mandatory in task lists** — Security always, Accessibility and Analytics conditionally
-7. **No stale docs** — the `doc-drift-check` hook catches drift even from ad-hoc changes
-8. **Specs and code commit together** — specs are the living source of truth
+5. **Layer 1 specs require architecture diagrams** — Mermaid data flow and module structure diagrams are mandatory
+6. **No spec without dialogue** — the AI must challenge, question, and validate before creating any spec document
+7. **Reviews are mandatory in task lists** — Security always, Accessibility and Analytics conditionally
+8. **No stale docs** — the `doc-drift-check` hook catches drift even from ad-hoc changes
+9. **Specs and code commit together** — specs are the living source of truth
 
 ## Per-Project Customization
 

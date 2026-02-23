@@ -1,13 +1,13 @@
 {
-  "name": "Enforce Package Structure",
-  "version": "1.2.0",
-  "description": "Validates that new files follow the required three-layer package layout with matching feature directories",
+  "name": "Enforce Structure and Spec Gates",
+  "version": "2.0.0",
+  "description": "Validates package layout, spec placement, Layer 1 before Layer 3, and spec-before-code — all on file creation only",
   "when": {
     "type": "fileCreated",
     "patterns": ["*/**"]
   },
   "then": {
     "type": "askAgent",
-    "prompt": "A new file was created. Verify it follows the required package structure. Every package directory must contain: docs/{feature-name}/ (Layer 1 high-level specs, one directory per feature), .kiro/steering/ (Layer 2 module conventions), .kiro/specs/{feature-name}/ (Layer 3 implementation specs, mirroring docs/{feature-name}/), a source directory, tests/, and pyproject.toml. Layer 1 and Layer 3 feature directories MUST use the same feature name — docs/{feature-name}/ maps to .kiro/specs/{feature-name}/. If the file is in a location that violates this structure, warn the user and suggest the correct path. Ignore files at the workspace root level. Inside the workspace-level .kiro/ directory, ignore steering/, hooks/, checklists/, and settings/ — these are workspace-level concerns. However, spec files (requirements.md, design.md, tasks.md) MUST NOT be created under the workspace-root .kiro/specs/ directory. Specs belong inside a package's .kiro/specs/{feature-name}/ directory. If a spec file is being created at .kiro/specs/, REJECT it and tell the user the correct path is {package-name}/.kiro/specs/{feature-name}/."
+    "prompt": "A new file was created. Perform ALL of the following checks:\n\n1. PACKAGE STRUCTURE: Verify the file follows the required package layout. Every package must have: docs/{feature-name}/ (Layer 1), .kiro/steering/ (Layer 2), .kiro/specs/{feature-name}/ (Layer 3, mirroring docs/), source directory, tests/, and pyproject.toml. Layer 1 and Layer 3 feature directories MUST use the same feature name.\n\n2. SPEC PLACEMENT: If the file is a spec (requirements.md, design.md, tasks.md), it MUST be inside a package's .kiro/specs/{feature-name}/ directory, NOT at the workspace-root .kiro/specs/. If at workspace root, REJECT and tell the user the correct path.\n\n3. LAYER 1 BEFORE LAYER 3: If the file is a Layer 3 spec (requirements.md, design.md, or tasks.md inside a .kiro/specs/{feature}/ directory within a package), extract the feature name and verify a Layer 1 spec exists at {package}/docs/{feature-name}/. If no matching Layer 1 spec exists, REJECT and tell the user to write the Layer 1 spec first.\n\n4. SPEC BEFORE CODE: If the file is a source code file inside a package (not a spec, steering, hook, config, doc, or test fixture), verify that a Layer 3 spec exists in that package's .kiro/specs/ directory. The spec MUST be in the target package, not at workspace root. If no spec exists, warn the user.\n\nIgnore files at the workspace root level. Inside the workspace-level .kiro/, ignore steering/, hooks/, checklists/, and settings/."
   }
 }
