@@ -1,0 +1,12 @@
+{
+  "name": "Marcus Consistency Audit",
+  "version": "1.0.0",
+  "description": "Validates internal consistency between README, steering, hooks, and checklists",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Perform a consistency audit of the .kiro/ directory (Marcus). Read .kiro/checklists/consistency.md for the review framework. List every file in .kiro/hooks/, .kiro/checklists/, and .kiro/steering/. Then read .kiro/README.md and cross-reference: is every file documented? Does every path reference in hooks and steering point to an existing file? Are the README tables accurate? Report every inconsistency found and propose fixes."
+  }
+}

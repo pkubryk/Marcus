@@ -1,0 +1,13 @@
+{
+  "name": "Enforce Package Structure",
+  "version": "1.0.0",
+  "description": "Validates that new files follow the required three-layer package layout",
+  "when": {
+    "type": "fileCreated",
+    "patterns": ["*/**"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new file was created. Verify it follows the required package structure. Every package directory must contain: docs/ (Layer 1 high-level specs), .kiro/steering/ (Layer 2 module conventions), .kiro/specs/ (Layer 3 implementation specs), a source directory, tests/, and pyproject.toml. If the file is in a location that violates this structure, warn the user and suggest the correct path. Ignore files at the workspace root level and inside the workspace-level .kiro/ directory."
+  }
+}

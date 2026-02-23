@@ -1,0 +1,12 @@
+{
+  "name": "Coverage Check",
+  "version": "1.0.0",
+  "description": "Runs test suite with coverage after each task to enforce >80% target",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "cd $(git rev-parse --show-toplevel 2>/dev/null || pwd) && if [ -f pyproject.toml ]; then python -m pytest --cov --cov-report=term-missing --cov-fail-under=80 -q 2>&1 || true; else echo 'No pyproject.toml found — skipping coverage check'; fi"
+  }
+}

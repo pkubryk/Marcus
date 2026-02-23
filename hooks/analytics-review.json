@@ -1,0 +1,12 @@
+{
+  "name": "Analytics Review",
+  "version": "1.0.0",
+  "description": "On-demand analytics instrumentation review",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Perform an analytics instrumentation review for the current feature. Read the checklist at .kiro/checklists/analytics.md and evaluate whether the feature has appropriate event tracking. Report what events should be instrumented, what is missing, and whether existing tracking is privacy-compliant. If this is a non-user-facing feature (backend utility, infrastructure), report that and skip the review."
+  }
+}

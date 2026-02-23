@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Hygiene Audit",
+  "description": "On-demand project hygiene audit — dead code, naming, orphaned files, dependency cleanup",
+  "version": "1",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Perform a project hygiene audit. Read .kiro/checklists/hygiene.md for the review framework. Scan the current workspace for dead code, orphaned files, naming inconsistencies, unused dependencies, and stale documentation. Be specific — name every file and issue. Propose concrete fixes. End with a prioritized action list."
+  }
+}

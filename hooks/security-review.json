@@ -1,0 +1,12 @@
+{
+  "name": "Security Review",
+  "version": "1.0.0",
+  "description": "On-demand security audit against the security checklist",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Perform a security review of the current feature's code. Read the checklist at .kiro/checklists/security.md and evaluate all source code files that were created or modified for this feature. Report concrete findings only — skip theoretical concerns. For each issue found, state the file, the problem, and the fix."
+  }
+}
