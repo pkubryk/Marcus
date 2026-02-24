@@ -35,3 +35,12 @@ Review all code produced in this feature against the following criteria.
 - No known vulnerabilities (run audit)
 - Dependency versions pinned
 - Minimal dependency surface — no unnecessary packages
+
+## Data Boundary
+- No corpus content, document metadata, or user queries sent to third-party APIs
+- All cloud LLM calls route through Amazon Bedrock (no direct OpenAI, Anthropic, etc.)
+- All cloud embedding calls route through Bedrock or use local models only
+- No direct vendor SDK clients (openai, anthropic, voyageai, cohere) used for runtime data
+- Dependencies that make HTTP calls evaluated for data exfiltration risk
+- Telemetry and crash reporting disabled or confirmed to exclude corpus-derived content
+- ML model downloads are inbound-only (no corpus data in requests)

@@ -19,6 +19,7 @@ git clone https://github.com/pkubryk/Marcus.git .kiro
 ├── steering/                        # Passive context — always injected
 │   ├── methodology.md               # Workflow, three-layer spec model, review integration rules
 │   ├── quality.md                    # Coding standards, type safety, testing requirements
+│   ├── data-boundary.md             # Data exfiltration prevention, approved boundary crossings
 │   └── no-documentation.md          # Prevents unnecessary summary/report generation
 │
 ├── hooks/                           # Active enforcement — fires on events
@@ -111,6 +112,7 @@ These fire automatically — no manual trigger needed.
 |------|-----------|---------|
 | `methodology.md` | Always | Spec-driven workflow, three-layer model, feature-scoped package layout, dialogue validation rule, review agent integration, ad-hoc drift checking |
 | `quality.md` | Always | Type safety, error handling, code structure, testability, testing standards |
+| `data-boundary.md` | Always | Data exfiltration prevention — only Bedrock and Kiro IDE are approved outbound data flows; no direct vendor APIs |
 | `no-documentation.md` | Always | Prevents AI from creating summary docs, cleanup reports, or process documentation unless explicitly requested |
 
 Steering is injected into every AI interaction automatically.
@@ -136,6 +138,7 @@ Review tasks reference the checklist files and instruct the agent to evaluate th
 7. **Reviews are mandatory in task lists** — Security always, Accessibility and Analytics conditionally
 8. **No stale docs** — the `doc-drift-check` hook catches drift even from ad-hoc changes
 9. **Specs and code commit together** — specs are the living source of truth
+10. **No data leaves the environment** — only Bedrock and Kiro IDE are approved outbound data flows; no direct vendor APIs for LLM, embedding, or vision calls
 
 ## Per-Project Customization
 
