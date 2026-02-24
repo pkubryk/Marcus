@@ -32,7 +32,7 @@ git clone https://github.com/pkubryk/Marcus.git .kiro
 │   ├── accessibility-review.kiro.hook    # On-demand: accessibility audit
 │   ├── analytics-review.kiro.hook        # On-demand: analytics instrumentation check
 │   ├── hygiene-audit.kiro.hook           # On-demand: project hygiene audit
-│   └── consistency-audit.kiro.hook       # On-demand: Marcus internal consistency check
+│   └── marcus-self-consistency-audit.kiro.hook  # On-demand: Marcus internal consistency check
 │
 └── checklists/                      # Review content — referenced by hooks and tasks
     ├── architecture-review.md       # Technical soundness, alternatives, failure modes
