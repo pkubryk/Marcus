@@ -30,7 +30,6 @@ git clone https://github.com/pkubryk/Marcus.git .kiro
 │   ├── architecture-review.kiro.hook     # On-demand: senior architect review
 │   ├── product-review.kiro.hook          # On-demand: senior PM review
 │   ├── security-review.kiro.hook         # On-demand: security audit
-│   ├── accessibility-review.kiro.hook    # On-demand: accessibility audit
 │   ├── analytics-review.kiro.hook        # On-demand: analytics instrumentation check
 │   ├── hygiene-audit.kiro.hook           # On-demand: project hygiene audit
 │   └── marcus-self-consistency-audit.kiro.hook  # On-demand: Marcus internal consistency check
@@ -39,7 +38,6 @@ git clone https://github.com/pkubryk/Marcus.git .kiro
     ├── architecture-review.md       # Technical soundness, alternatives, failure modes
     ├── product-review.md            # Problem validation, user value, scope, UX
     ├── security.md                  # Auth, input validation, data protection, API security
-    ├── accessibility.md             # Semantic markup, contrast, touch targets, screen readers
     ├── analytics.md                 # Event tracking, privacy compliance, metrics
     ├── hygiene.md                   # Dead code, naming, orphaned files, dependencies
     └── consistency.md               # Internal consistency between Marcus docs and files
@@ -86,7 +84,6 @@ Layer 1 and Layer 3 use the same feature name. The mapping is 1:1 — `docs/{fea
 | Architecture Challenger | Senior architect — challenges technical decisions, proposes alternatives, finds failure modes | After drafting a high-level spec or design | `checklists/architecture-review.md` |
 | Product Challenger | Senior PM — challenges product decisions, validates user value, questions scope | After drafting a high-level spec or design | `checklists/product-review.md` |
 | Security Review | Security auditor — evaluates auth, input validation, data protection, API security | After feature implementation is complete, before PR | `checklists/security.md` |
-| Accessibility Review | Accessibility specialist — evaluates semantic markup, contrast, keyboard nav, screen readers | After UI implementation is complete (skip for non-UI) | `checklists/accessibility.md` |
 | Analytics Review | Analytics analyst — evaluates event tracking, funnel instrumentation, privacy compliance | After user-facing feature is complete (skip for backend-only) | `checklists/analytics.md` |
 | Hygiene Audit | Project janitor — finds dead code, orphaned files, naming issues, stale docs, unused deps | Periodically, or before major releases | `checklists/hygiene.md` |
 | Marcus Consistency Audit | Meta-auditor — validates that README, steering, hooks, and checklists are in sync | After modifying any Marcus file, or periodically | `checklists/consistency.md` |
@@ -122,7 +119,6 @@ Steering is injected into every AI interaction automatically.
 When generating a `tasks.md`, review tasks are automatically included based on the feature's nature:
 
 - **Security Review** — ALWAYS included as a task
-- **Accessibility Review** — included when the feature has UI components
 - **Analytics Review** — included when the feature is user-facing
 
 Review tasks reference the checklist files and instruct the agent to evaluate the code produced by the feature.

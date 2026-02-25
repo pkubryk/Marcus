@@ -189,7 +189,6 @@ development workflow — both in spec-driven task lists and during ad-hoc coding
 | Review | Checklist | Applies When |
 |--------|-----------|--------------|
 | Security | .kiro/checklists/security.md | ALWAYS — every feature, every module |
-| Accessibility | .kiro/checklists/accessibility.md | Feature involves UI (tsx, jsx, html, css, templates) |
 | Analytics | .kiro/checklists/analytics.md | Feature involves user-facing interactions |
 
 ### RULE: Task List Generation
@@ -201,7 +200,7 @@ When generating a tasks.md file, you MUST:
 3. Place review tasks AFTER all implementation and test tasks
 4. Each review task MUST instruct the agent to read the specific checklist file and evaluate the code produced by the feature
 
-Security Review is ALWAYS included. Accessibility and Analytics are included based on the feature's nature.
+Security Review is ALWAYS included. Analytics is included based on the feature's nature.
 
 Example task list structure:
 ```
@@ -209,8 +208,7 @@ Example task list structure:
 - [ ] 2. Implement Y (from design)
 - [ ] 3. Write unit and integration tests
 - [ ] 4. Security Review — read .kiro/checklists/security.md and evaluate all source files created or modified in this feature against the checklist. Report findings with file, issue, and fix.
-- [ ] 5. Accessibility Review — read .kiro/checklists/accessibility.md and evaluate all UI components created or modified in this feature. Report findings with file, issue, and fix. (include only if feature has UI)
-- [ ] 6. Analytics Review — read .kiro/checklists/analytics.md and evaluate analytics instrumentation needs for this feature. Report what events should be tracked and what is missing. (include only if feature is user-facing)
+- [ ] 5. Analytics Review — read .kiro/checklists/analytics.md and evaluate analytics instrumentation needs for this feature. Report what events should be tracked and what is missing. (include only if feature is user-facing)
 ```
 
 ### RULE: Ad-Hoc / Vibe Coding
@@ -221,11 +219,9 @@ direct prompting), you MUST still consider reviews AND documentation drift:
 1. After completing the requested change, evaluate whether the change touches
    security-sensitive code (auth, input handling, data access, API endpoints).
    If yes, read .kiro/checklists/security.md and flag any concerns.
-2. If the change involves UI components, read .kiro/checklists/accessibility.md
-   and flag any concerns.
-3. You do NOT need to run a full formal review — just flag concrete issues you
+2. You do NOT need to run a full formal review — just flag concrete issues you
    notice based on the checklists.
-4. **Documentation drift**: Check whether the change invalidates or makes stale
+3. **Documentation drift**: Check whether the change invalidates or makes stale
    any of the following:
    - The package's README.md
    - Layer 1 specs in `{package}/docs/{feature}/`
@@ -242,7 +238,6 @@ agent execution.
 The following userTriggered hooks are available for deep on-demand reviews outside of task execution. Users can trigger them from the Agent Hooks panel:
 
 - Security Review hook — performs a full security audit of the current feature
-- Accessibility Review hook — performs a full a11y audit of UI components
 - Analytics Review hook — evaluates analytics instrumentation completeness
 
 These are complementary to the task-integrated reviews. Use them for:
